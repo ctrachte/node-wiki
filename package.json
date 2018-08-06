@@ -1,5 +1,5 @@
 {
-  "name": "bloccit",
+  "name": "node-wiki",
   "version": "1.0.0",
   "description": "A node application for creating and sharing wikis",
   "main": "src/server.js",
