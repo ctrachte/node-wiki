@@ -1,3 +1,5 @@
+const legit = require("legit");
+
 module.exports = {
   validatePosts(req, res, next) {
 
@@ -39,12 +41,17 @@ module.exports = {
   validateUsers(req, res, next) {
     if(req.method === "POST") {
 
-      req.checkBody("email", "must be valid").isEmail();
-      req.checkBody("password", "must be at least 6 characters in length").isLength({min: 6})
+      req.checkBody("password", "must be at least 6 characters in length").isLength({min: 6});
       req.checkBody("passwordConfirmation", "must match password provided").optional().matches(req.body.password);
+
+     legit(req.body.email)
+       .then(result => {
+         if (result.isValid===false) {req.flash("error", "Please choose a valid email.");}
+       })
+       .catch(err => console.log(err));
     }
 
-    const errors = req.validationErrors();
+    let errors = req.validationErrors();
 
     if (errors) {
       req.flash("error", errors);

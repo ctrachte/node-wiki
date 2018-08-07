@@ -1,5 +1,6 @@
 const userQueries = require("../db/queries.users.js");
 const passport = require("passport");
+const sgMail = require('@sendgrid/mail');
 
 module.exports = {
   signUp(req, res, next){
@@ -13,10 +14,19 @@ module.exports = {
     };
     userQueries.createUser(newUser, (err, user) => {
       if(err){
-        req.flash("error", err);
+        let message = {param: "", msg:err.errors[0].message};
+        req.flash('error', message);
         res.redirect("/users/sign_up");
       } else {
-
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        const msg = {
+          to: newUser.email,
+          from: 'nodewiki@examplemail.com',
+          subject: 'Welcome to Node-Wiki!',
+          text: 'Enjoy your free account!',
+          html: '<strong>Create a basic wiki today!</strong>',
+        };
+        sgMail.send(msg);
         passport.authenticate("local")(req, res, () => {
           req.flash("notice", "You've successfully signed up!");
           res.redirect("/");
