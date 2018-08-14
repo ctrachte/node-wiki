@@ -8,10 +8,11 @@ module.exports = {
 
     const salt = bcrypt.genSaltSync();
     const hashedPassword = bcrypt.hashSync(newUser.password, salt);
-
+    
     return User.create({
       email: newUser.email,
-      password: hashedPassword
+      password: hashedPassword,
+      role: newUser.membershipType
     })
     .then((user) => {
       callback(null, user);

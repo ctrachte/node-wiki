@@ -10,7 +10,8 @@ module.exports = {
     let newUser = {
       email: req.body.email,
       password: req.body.password,
-      passwordConfirmation: req.body.passwordConfirmation
+      passwordConfirmation: req.body.passwordConfirmation,
+      membershipType: req.body.membershipType
     };
     userQueries.createUser(newUser, (err, user) => {
       if(err){
