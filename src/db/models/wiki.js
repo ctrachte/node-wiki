@@ -9,7 +9,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    private: DataTypes.BOOLEAN
+    private: DataTypes.BOOLEAN,
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
   }, {});
   Wiki.associate = function(models) {
     Wiki.belongsTo(models.User, {

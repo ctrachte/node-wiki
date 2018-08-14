@@ -3,6 +3,7 @@ module.exports = {
     const mockAuth = require("../../spec/support/mock-auth.js");
     const staticRoutes = require("../routes/static");
     const userRoutes = require("../routes/users");
+    const wikiRoutes = require("../routes/wikis");
 
 
     if(process.env.NODE_ENV == "test") {
@@ -11,5 +12,7 @@ module.exports = {
 
     app.use(staticRoutes);
     app.use(userRoutes);
+    app.use(wikiRoutes);
+
   }
 }
