@@ -4,23 +4,26 @@
     <% include ../static/partials/head.ejs %>
   </head>
   <body>
+
     <main class="container">
       <% include ../static/partials/navbar.ejs %>
 
-      <h1>Browse Public Wikis</h1>
+      <header class="jumbotron my-4 text-center">
+        <h1 class="display-3">Browse Public Wikis</h1>
+        <% if(currentUser) { %>
+          <a href="/wikis/new" class="btn text-secondary">Create a New Public Wiki for Free!</a>
+        <% } %>
+      </header>
 
-      <% if(currentUser) { %>
-        <a href="/wikis/new" class="btn btn-success">New Public Wiki</a>
-      <% } %>
-
-      <ul class="list-group">
 
         <% wikis.forEach((wiki) => { %>
-           <li class="list-group-item">
-            <a href="/wikis/<%= wiki.id %>"> <%= wiki.title %> </a>
-          </li>
+             <div class="card border-secondary mb-3" style="margin:1.5em;">
+               <div class="card-body">
+                 <h5 class="card-title"><%= wiki.title %></h5>
+                 <a href="/wikis/<%= wiki.id %>" class="btn btn-info">Check it out!</a>
+               </div>
+             </div>
         <% }) %>
-      </ul>
 
     </main>
   </body>
