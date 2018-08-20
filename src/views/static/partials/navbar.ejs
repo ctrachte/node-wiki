@@ -10,6 +10,15 @@
           <li class="nav-item">
             <a class="nav-link" href="/users/sign_out">Sign out</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/users/<%= currentUser.id %>">Profile</a>
+          </li>
+          <% if(currentUser.role != "premium") { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/users/showUpgrade">Upgrade to Premium</a>
+          </li>
+          <% }%>
+
         <% } else { %>
           <li class="nav-item">
             <a class="nav-link" href="/users/sign_up">Sign up</a>

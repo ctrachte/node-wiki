@@ -29,6 +29,14 @@ module.exports = class ApplicationPolicy {
     return true;
   }
 
+  showUpgrade() {
+    return this.user && this.user.role != "premium";
+  }
+
+  upgradeAccount() {
+    return this.showUpgrade();
+  }
+
   edit() {
     return this.new() &&
       this.record && (this._isOwner() || this._isAdmin());

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../static/partials/head.ejs %>
+  </head>
+  <body>
+
+    <% include ../static/partials/navbar.ejs %>
+
+    <main class="container">
+
+      <% include ../static/partials/messages.ejs %>
+
+      <h1><%= `${user.email}'s profile` %></h1>
+
+      <% if (user.role != "premium") { %>
+        <a href="/users/showUpgrade" class="btn btn-primary btn-lg">Upgrade to Premium</a>
+      <% } else { %>
+        <form action="/users/downgrade" method="post">
+          <button type="submit" class="btn btn-primary">Downgrade to standard account</button>
+        </form>
+      <% } %>
+
+      <hr>
+
+      <h2> My Wikis</h2>
+
+      <ul class="list-unstyled">
+
+        <% if(wikis) { %>
+          <% wikis.forEach((wiki) => { %>
+            <li>
+              <a href="/wikis/<%= wiki.id %>">
+                <%= wiki.title %>
+              </a>
+            </li>
+          <% }) %>
+        <% } %>
+      </ul>
+
+    </main>
+
+    <% include ../static/partials/baseScripts.ejs %>
+
+  </body>
+</html>
