@@ -10,33 +10,43 @@
     <main class="container">
 
       <% include ../static/partials/messages.ejs %>
+      <section class="col-lg-8">
 
-      <h1><%= `${user.email}'s profile` %></h1>
+        <div class="card m-1">
+          <div class="card-body">
+            <h4 class="card-title"><%= `${user.email}'s profile` %></h4>
+            <p class="card-text"><%= `Account Status: ${user.role}` %></p>
+            <% if (user.role != "premium") { %>
+              <a href="/users/showUpgrade" class="btn btn-primary btn-lg">Upgrade to Premium</a>
+            <% } else { %>
+              <form action="/users/<%= user.id %>/downgrade" method="post">
+                <button type="submit" class="btn btn-primary">Downgrade to standard account</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
 
-      <% if (user.role != "premium") { %>
-        <a href="/users/showUpgrade" class="btn btn-primary btn-lg">Upgrade to Premium</a>
-      <% } else { %>
-        <form action="/users/<%= user.id %>/downgrade" method="post">
-          <button type="submit" class="btn btn-primary">Downgrade to standard account</button>
-        </form>
-      <% } %>
+      </section>
+      <section class="col-lg-8">
 
-      <hr>
+        <div class="card m-1">
+          <div class="card-header">
+            My Wikis
+          </div>
+          <ul class="list-group list-group-flush">
+            <% if(wikis) { %>
+              <% wikis.forEach((wiki) => { %>
+                <li class="list-group-item">
+                  <a href="/wikis/<%= wiki.id %>">
+                    <%= wiki.title %>
+                  </a>
+                </li>
+              <% }) %>
+            <% } %>
+          </ul>
+        </div>
 
-      <h2>My Wikis</h2>
-
-      <ul class="list-unstyled">
-
-        <% if(wikis) { %>
-          <% wikis.forEach((wiki) => { %>
-            <li>
-              <a href="/wikis/<%= wiki.id %>">
-                <%= wiki.title %>
-              </a>
-            </li>
-          <% }) %>
-        <% } %>
-      </ul>
+      </section>
 
     </main>
 
