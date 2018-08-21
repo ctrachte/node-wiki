@@ -16,7 +16,7 @@
         <p class="lead">Create and edit private wikis with a premium account.</p>
       </header>
 
-      <form action="/users/upgrade" method="post">
+      <form action="/users/<%= user.id %>/upgrade" method="post">
         <script
           src="https://checkout.stripe.com/checkout.js" class="stripe-button"
           data-key="pk_test_7ggQU4Dl9g0WK9Xior6131Wq"

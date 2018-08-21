@@ -26,8 +26,7 @@ module.exports = {
   },
 
   upgradeAccount(req, callback){
-    console.log(req)
-    return User.findById(req.user.id)
+    return User.findById(req.params.id)
     .then((user) => {
       if(!user){
         return callback("No user account found for that email.");

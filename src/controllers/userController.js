@@ -5,9 +5,11 @@ const stripe = require("stripe")("sk_test_U68vkbnSn99gjqwhOQHA7TBx");
 const Authorizer = require("../policies/application");
 
 module.exports = {
+
   signUp(req, res, next){
     res.render("users/signup");
   },
+
   create(req, res, next){
     let newUser = {
       email: req.body.email,
@@ -37,9 +39,11 @@ module.exports = {
       }
     });
   },
+
   signInForm(req, res, next){
     res.render("users/signin");
   },
+
   signIn(req, res, next){
     passport.authenticate("local")(req, res, function () {
       if(!req.user){
@@ -51,11 +55,13 @@ module.exports = {
       }
     })
   },
+
   signOut(req, res, next){
     req.logout();
     req.flash("notice", "You've successfully signed out!");
     res.redirect("/");
   },
+
   show(req, res, next){
 
     userQueries.getUser(req.params.id, (err, result) => {
@@ -68,19 +74,26 @@ module.exports = {
       }
     });
   },
+
   showUpgrade(req, res, next){
     const authorized = new Authorizer(req.user).showUpgrade();
     if (authorized) {
-      res.render("users/upgrade");
+      userQueries.getUser(req.user.id, (err, result) => {
+
+        if(err || result.user === undefined){
+          req.flash("notice", err);
+          res.redirect("/");
+        } else {
+          res.render("users/upgrade", {...result});
+        }
+      });
     } else {
-      req.flash("notice", "Your account is already premium.");
+      req.flash("notice", "You are not authorized to do that, or your account is already premium.");
       res.redirect("/");
     }
   },
   upgrade(req, res, next){
-
     const authorized = new Authorizer(req.user).upgradeAccount();
-
     if(authorized) {
       userQueries.upgradeAccount(req, (err, user) => {
         if(err){
@@ -106,12 +119,13 @@ module.exports = {
       res.redirect("/");
     }
   },
+
   downgrade(req, res, next){
-    console.log(req.user.dataValues);
-    const authorized = new Authorizer(req.user.dataValues).upgradeAccount();
-    console.log(authorized);
+    console.log(req.user);
+
+    const authorized = new Authorizer(req.user).upgradeAccount();
     if(authorized) {
-      userQueries.downgradeAccount(req.user.dataValues.id, (err, user) => {
+      userQueries.downgradeAccount(req.params.id, (err, user) => {
         if(err){
           let message = {param: "", msg:err.errors[0].message};
           req.flash('error', message);
@@ -119,7 +133,7 @@ module.exports = {
         } else {
           sgMail.setApiKey(process.env.SENDGRID_API_KEY);
           const msg = {
-            to: req.body.stripeEmail,
+            to: req.user.email,
             from: 'nodewiki@examplemail.com',
             subject: 'You have downgraded your Node Wiki account',
             text: 'We are sad to see you go...',

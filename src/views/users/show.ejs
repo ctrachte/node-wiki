@@ -16,14 +16,14 @@
       <% if (user.role != "premium") { %>
         <a href="/users/showUpgrade" class="btn btn-primary btn-lg">Upgrade to Premium</a>
       <% } else { %>
-        <form action="/users/downgrade" method="post">
+        <form action="/users/<%= user.id %>/downgrade" method="post">
           <button type="submit" class="btn btn-primary">Downgrade to standard account</button>
         </form>
       <% } %>
 
       <hr>
 
-      <h2> My Wikis</h2>
+      <h2>My Wikis</h2>
 
       <ul class="list-unstyled">
 

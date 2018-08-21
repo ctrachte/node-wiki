@@ -33,6 +33,10 @@ module.exports = class ApplicationPolicy {
     return this.user && this.user.role != "premium";
   }
 
+  downgradeAccount () {
+    this.user && this._isPremium();
+  }
+
   upgradeAccount() {
     return this.showUpgrade();
   }
