@@ -165,7 +165,7 @@ describe("routes : users", () => {
         request.get({         // mock authentication
           url: "http://localhost:3000/auth/fake",
           form: {
-            role: 'premium',     // mock authenticate as a premium user
+            role: user.role,     // mock authenticate as a premium user
             userId: user.id,
             email: user.email
           }
