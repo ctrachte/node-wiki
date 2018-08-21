@@ -121,9 +121,9 @@ module.exports = {
   },
 
   downgrade(req, res, next){
-    console.log(req.user);
 
-    const authorized = new Authorizer(req.user).upgradeAccount();
+    const authorized = new Authorizer(req.user).downgradeAccount();
+
     if(authorized) {
       userQueries.downgradeAccount(req.params.id, (err, user) => {
         if(err){

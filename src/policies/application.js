@@ -34,7 +34,7 @@ module.exports = class ApplicationPolicy {
   }
 
   downgradeAccount () {
-    this.user && this._isPremium();
+    return this.user && this._isPremium();
   }
 
   upgradeAccount() {
