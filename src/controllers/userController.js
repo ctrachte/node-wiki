@@ -102,13 +102,23 @@ module.exports = {
     if(authorized) {
       userQueries.changeRole(req.params.id, (err, user) => {
         if(err){
+          console.log(err);
           let message = {param: "", msg:err.errors[0].message};
           req.flash('error', message);
           res.redirect("/");
         } else {
+          // Get the payment token ID submitted by the form:
+          const token = req.body.stripeToken; // Using Express
+
+          const charge = stripe.charges.create({
+            amount: 999,
+            currency: 'usd',
+            description: 'Example charge',
+            source: token,
+          });
           sgMail.setApiKey(process.env.SENDGRID_API_KEY);
           const msg = {
-            to: req.body.stripeEmail,
+            to: req.user.email,
             from: 'nodewiki@examplemail.com',
             subject: 'Welcome to Premium Node Wiki!',
             text: 'Enjoy creating private wikis...',
