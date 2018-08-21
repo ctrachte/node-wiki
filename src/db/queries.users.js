@@ -7,6 +7,7 @@ const Wiki = require("./models").Wiki;
 
 
 module.exports = {
+
   createUser(newUser, callback){
 
     const salt = bcrypt.genSaltSync();
@@ -25,38 +26,13 @@ module.exports = {
     })
   },
 
-  upgradeAccount(req, callback){
-    return User.findById(req.params.id)
-    .then((user) => {
-      if(!user){
-        return callback("No user account found for that email.");
-      }
-      const token = req.body.stripeToken; // Using Express
-
-      const charge = stripe.charges.create({
-        amount: 1500,
-        currency: 'usd',
-        description: 'Node Wiki Premium Account',
-        source: token,
-      });
-      user.update({
-        role: "premium"
-      })
-      .then(() => {
-        callback(null, user);
-      })
-      .catch((err) => {
-        callback(err);
-      });
-    });
-  },
-  downgradeAccount(id, callback){
-
+  changeRole(id, callback){
     return User.findById(id)
     .then((user) => {
       if(!user){
-        return callback("No user account found for that user id...");
-      } else {
+        return callback("No user account found for that email.");
+
+      } else if (user.role === "premium") {
         user.update({
           role: "member"
         })
@@ -66,10 +42,22 @@ module.exports = {
         .catch((err) => {
           callback(err);
         });
+
+      } else {
+        user.update({
+          role: "premium"
+        })
+        .then(() => {
+          callback(null, user);
+        })
+        .catch((err) => {
+          callback(err);
+        });
       }
+
     });
   },
-
+  
   getUser(id, callback){
     let result = {};
     User.findById(id)

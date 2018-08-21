@@ -63,16 +63,21 @@ module.exports = {
   },
 
   show(req, res, next){
+    const authorized = new Authorizer(req.user).new();
+      if (authorized) {
+      userQueries.getUser(req.params.id, (err, result) => {
 
-    userQueries.getUser(req.params.id, (err, result) => {
-
-      if(err || result.user === undefined){
-        req.flash("notice", "No user found with that ID.");
-        res.redirect("/");
-      } else {
-        res.render("users/show", {...result});
-      }
-    });
+        if(err || result.user === undefined){
+          req.flash("notice", "No user found with that ID.");
+          res.redirect("/");
+        } else {
+          res.render("users/show", {...result});
+        }
+      });
+    } else {
+      req.flash("notice", "You are not authorized to view this profile.");
+      res.redirect("/");
+    }
   },
 
   showUpgrade(req, res, next){
@@ -95,9 +100,9 @@ module.exports = {
   upgrade(req, res, next){
     const authorized = new Authorizer(req.user).upgradeAccount();
     if(authorized) {
-      userQueries.upgradeAccount(req, (err, user) => {
+      userQueries.changeRole(req.params.id, (err, user) => {
         if(err){
-          let message = {param: "", msg:err};
+          let message = {param: "", msg:err.errors[0].message};
           req.flash('error', message);
           res.redirect("/");
         } else {
@@ -125,7 +130,7 @@ module.exports = {
     const authorized = new Authorizer(req.user).downgradeAccount();
 
     if(authorized) {
-      userQueries.downgradeAccount(req.params.id, (err, user) => {
+      userQueries.changeRole(req.params.id, (err, user) => {
         if(err){
           let message = {param: "", msg:err.errors[0].message};
           req.flash('error', message);
