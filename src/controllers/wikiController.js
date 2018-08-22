@@ -10,7 +10,7 @@ module.exports = {
         if(err){
           res.redirect(500, "static/index");
         } else {
-          res.render("/wikis/index", {wikis});
+          res.render("wikis/index", {wikis});
         }
       })
     } else {
@@ -23,7 +23,7 @@ module.exports = {
       if(err){
         res.redirect(500, "static/index");
       } else {
-        res.render("/wikis/index", {wikis});
+        res.render("wikis/index", {wikis});
       }
     })
   },
