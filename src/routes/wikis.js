@@ -8,10 +8,17 @@ router.get("/wikis", wikiController.index);
 router.get("/publicWikis", wikiController.publicIndex);
 
 router.get("/wikis/new", wikiController.new);
+router.get("/wikis/newPrivate", wikiController.newPrivate);
+
 router.post("/wikis/create",
   helper.ensureAuthenticated,
   validation.validateWikis,
   wikiController.create);
+router.post("/wikis/createPrivate",
+  helper.ensureAuthenticated,
+  validation.validateWikis,
+  wikiController.createPrivate);
+  
 router.get("/wikis/:id", wikiController.show);
 router.post("/wikis/:id/destroy", wikiController.destroy);
 router.get("/wikis/:id/edit", wikiController.edit);

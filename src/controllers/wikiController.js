@@ -36,13 +36,23 @@ module.exports = {
       res.redirect("/wikis");
     }
   },
+  newPrivate(req, res, next){
+    const authorized = new Authorizer(req.user)._isPremium();
+    if(authorized) {
+      res.render("wikis/newPrivate");
+    } else {
+      req.flash("notice", "You are not authorized to create new private wikis");
+      res.redirect("/wikis/publicIndex");
+    }
+  },
   create(req, res, next){
     const authorized = new Authorizer(req.user).create();
     if(authorized) {
       let newWiki= {
         title: req.body.title,
         body: req.body.body,
-        userId: req.user.id
+        userId: req.user.id,
+        private:false
       };
       wikiQueries.addWiki(newWiki, (err, wiki) => {
         if(err){
@@ -54,6 +64,27 @@ module.exports = {
     } else {
 
       req.flash("notice", "You are not authorized to create a new wiki.");
+      res.redirect("/wikis");
+    }
+  },
+  createPrivate(req, res, next){
+    const authorized = new Authorizer(req.user)._isPremium();
+    if(authorized) {
+      let newWiki= {
+        title: req.body.title,
+        body: req.body.body,
+        userId: req.user.id,
+        private:true
+      };
+      wikiQueries.addWiki(newWiki, (err, wiki) => {
+        if(err){
+          res.redirect(500, "/wikis/newPrivate");
+        } else {
+          res.redirect(303, `/wikis/${wiki.id}`);
+        }
+      });
+    } else {
+      req.flash("notice", "You are not authorized to create a private wiki.");
       res.redirect("/wikis");
     }
   },

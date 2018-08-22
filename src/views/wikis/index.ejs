@@ -10,8 +10,13 @@
 
       <header class="jumbotron my-4 text-center">
         <h1 class="display-3">Browse Public Wikis</h1>
-        <% if(currentUser) { %>
-          <a href="/wikis/new" class="btn text-secondary">Or Create a New Public Wiki for Free!</a>
+        <% if(currentUser.role === "member") { %>
+          <a href="/wikis/new" class="btn text-secondary">Create a New Public Wiki for Free</a>
+        <% } else if (currentUser.role === "premium" || currentUser.role === "admin") { %>
+          <a href="/wikis/new" class="btn text-secondary">Create a New Public Wiki for Free</a>
+          <a href="/wikis/newPrivate" class="btn text-secondary">Or Create a New Private Wiki</a>
+        <% } else { %>
+          <p> Sign in or sign up to edit wikis </p>
         <% } %>
       </header>
 
