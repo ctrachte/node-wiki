@@ -7,6 +7,7 @@ for(let i = 1 ; i <= 15 ; i++){
   wikis.push({
     title: faker.hacker.noun(),
     body: faker.hacker.phrase(),
+    private: faker.hacker.boolean();
     userId: i,
     createdAt: new Date(),
     updatedAt: new Date()

@@ -21,6 +21,7 @@ describe("routes : wikis", () => {
         Wiki.create({
           title: "Cool New Wiki",
           body: "There is a lot of them",
+          private:false,
           userId: this.user.id
         })
         .then((res) => {
@@ -35,13 +36,25 @@ describe("routes : wikis", () => {
     });
   });
 
-  describe("GET /wikis", () => {
+  describe("GET /publicWikis", () => {
 
-   it("should respond with all wikis", (done) => {
-     request.get(`${base}/wikis`, (err, res, body) => {
+   it("should respond with all public wikis", (done) => {
+     request.get(`${base}/publicWikis`, (err, res, body) => {
        expect(err).toBeNull();
        expect(body).toContain("Wikis");
        expect(body).toContain("Cool New Wiki");
+       done();
+     });
+   });
+
+  });
+
+  describe("GET /wikis", () => {
+
+   it("should redirect to home, not render anything", (done) => {
+     request.get(`${base}/wikis`, (err, res, body) => {
+       expect(err).toBeNull();
+       expect(res.statusCode).toBe(404);
        done();
      });
    });
@@ -78,7 +91,18 @@ describe("routes : wikis", () => {
       it("should render a new wiki form", (done) => {
         request.get(`${base}/wikis/new`, (err, res, body) => {
           expect(err).toBeNull();
-          expect(body).toContain("New Wiki");
+          expect(body).toContain("New Public Wiki");
+          done();
+        });
+      });
+
+    });
+    describe("GET /wikis/newPrivate", () => {
+
+      it("should render a new private wiki form", (done) => {
+        request.get(`${base}/wikis/newPrivate`, (err, res, body) => {
+          expect(err).toBeNull();
+          expect(body).toContain("New Private Wiki");
           done();
         });
       });
@@ -137,6 +161,35 @@ describe("routes : wikis", () => {
           );
         });
      });
+   describe("POST /wikis/createPrivate", () => {
+
+      it("should create a new Private wiki and redirect", (done) => {
+         const options = {
+           url: `${base}/wikis/createPrivate`,
+           form: {
+             title: "snow",
+             body: "White powdery substance that falls from the sky!",
+             userId: this.user.id
+           }
+         };
+         request.post(options,
+           (err, res, body) => {
+
+             Wiki.findOne({where: {title: "snow"}})
+             .then((wiki) => {
+               expect(wiki).not.toBeNull();
+               expect(wiki.title).toBe("snow");
+               expect(wiki.body).toBe("White powdery substance that falls from the sky!");
+               done();
+             })
+             .catch((err) => {
+               console.log(err);
+               done();
+             });
+           }
+         );
+       });
+    });
     describe("GET /wikis/:id", () => {
 
      it("should render a view with the selected wiki", (done) => {
@@ -220,7 +273,6 @@ describe("routes : wikis", () => {
      });
    });
    // end admin user specs, begin member user specs
-
   describe("member user performing CRUD actions for another users Wikis", () => {
 
     // before each test in member user context, send an authentication request
@@ -251,12 +303,56 @@ describe("routes : wikis", () => {
        it("should render a new wiki form", (done) => {
          request.get(`${base}/wikis/new`, (err, res, body) => {
            expect(err).toBeNull();
-           expect(body).toContain("New Wiki");
+           expect(body).toContain("New Public Wiki");
            done();
          });
        });
 
      });
+     describe("GET /wikis/newPrivate", () => {
+
+       it("should should not render a new private wiki form", (done) => {
+         request.get(`${base}/wikis/newPrivate`, (err, res, body) => {
+           expect(err).toBeNull();
+           expect(body).not.toContain("New Private Wiki");
+           done();
+         });
+       });
+
+     });
+     describe("POST /wikis/createPrivate", () => {
+
+        it("should not create a new private wiki", (done) => {
+           const options = {
+             url: `${base}/wikis/createPrivate`,
+             form: {
+               title: "Watching snow melt",
+               body: "Without a doubt my favoriting things to do besides watching paint dry!",
+               private:true,
+               userId: this.user.id
+             }
+           };
+           request.post(options,
+             (err, res, body) => {
+
+               Wiki.findOne({where: {title: "Watching snow melt"}})
+               .then((wiki) => {
+
+                // the code in this block will not be evaluated since the validation error
+                // will skip it. Instead, we'll catch the error in the catch block below
+                // and set the expectations there
+
+                 done();
+
+               })
+               .catch((err) => {
+                 expect(err).not.toBeNull();
+                 done();
+               });
+             }
+           );
+         });
+      });
      describe("POST /wikis/create", () => {
 
         it("should create a new wiki and redirect", (done) => {
