@@ -5,6 +5,8 @@ const wikiController = require("../controllers/wikiController");
 const helper = require("../auth/helpers");
 
 router.get("/wikis", wikiController.index);
+router.get("/publicWikis", wikiController.publicIndex);
+
 router.get("/wikis/new", wikiController.new);
 router.post("/wikis/create",
   helper.ensureAuthenticated,

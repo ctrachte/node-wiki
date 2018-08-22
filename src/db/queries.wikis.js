@@ -12,6 +12,15 @@ module.exports = {
       callback(err);
     })
   },
+  getPublicWikis(callback){
+    return Wiki.findAll({where:{isPrivate:false}})
+    .then((wikis) => {
+      callback(null, wikis);
+    })
+    .catch((err) => {
+      callback(err);
+    })
+  },
   addWiki(newWiki, callback){
     return Wiki.create(newWiki)
     .then((wiki) => {

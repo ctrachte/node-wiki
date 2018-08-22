@@ -14,7 +14,7 @@ module.exports = class ApplicationPolicy {
   }
 
   _isPremium() {
-    return this.user && this.user.role == "premium";
+    return this.user && this.user.role == "premium" || this._isAdmin();
   }
 
   new() {

@@ -3,11 +3,27 @@ const Authorizer = require("../policies/wiki");
 
 module.exports = {
   index(req, res, next){
-    wikiQueries.getAllWikis((err, wikis) => {
+    const authorized = new Authorizer(req.user)._isPremium();
+
+    if(authorized) {
+      wikiQueries.getAllWikis((err, wikis) => {
+        if(err){
+          res.redirect(500, "static/index");
+        } else {
+          res.render("/wikis/index", {wikis});
+        }
+      })
+    } else {
+      req.flash("notice", "You are not authorized to view private wikis");
+      res.redirect("/wikis/publicIndex");
+    }
+  },
+  publicIndex(req, res, next){
+    wikiQueries.getPublicWikis((err, wikis) => {
       if(err){
         res.redirect(500, "static/index");
       } else {
-        res.render("wikis/index", {wikis});
+        res.render("/wikis/index", {wikis});
       }
     })
   },
