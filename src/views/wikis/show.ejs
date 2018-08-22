@@ -16,7 +16,7 @@
           <% } else { %>
             <h5 class="card-title"><%= wiki.title %><i class="fa fa-unlock-alt m-1 icon-red" aria-hidden="true"></i></h5>
           <% } %>
-          <p class="card-text"><%= wiki.body %></p>
+          <%- wiki.body %>
           <% if(currentUser && (currentUser.isAdmin() || ((currentUser.id===wiki.userId && wiki.private===false) || (currentUser.role === "premium" && currentUser.id===wiki.userId && wiki.private===true)))) { %>
             <a href="/wikis/<%= wiki.id %>/edit" class="btn btn-warning">Edit</a>
             <form style="display:initial" action="/wikis/<%= wiki.id %>/destroy" method="post">

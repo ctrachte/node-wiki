@@ -94,7 +94,8 @@ module.exports = {
       if(err || wiki == null){
         res.redirect(404, "/");
       } else {
-        res.render("wikis/show", {markdown.toHTML(wiki)});
+        wiki.body = markdown.toHTML(wiki.body);
+        res.render("wikis/show", {wiki});
       }
     });
   },
