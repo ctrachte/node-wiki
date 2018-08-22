@@ -132,5 +132,24 @@ module.exports = {
         res.redirect(`/wikis/${req.params.id}`);
       }
     });
-  }
+  },
+  changePrivacy(req, res, next){
+    const authorized = new Authorizer(req.user)._isPremium();
+    if(authorized) {
+      wikiQueries.changePrivacy(req.params.id, (err, wiki) => {
+        if(err){
+          console.log(err);
+          let message = {param: "", msg:err.errors[0].message};
+          req.flash('error', message);
+          res.redirect(`/wikis/${req.params.id}`);
+        } else {
+          req.flash("notice", "Privacy updated.");
+          res.redirect(`/wikis/${req.params.id}`);
+        }
+      });
+    } else {
+      req.flash("error", "You are not authorized to update this user.");
+      res.redirect("/");
+    }
+  },
 }

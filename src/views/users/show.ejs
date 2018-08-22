@@ -17,11 +17,14 @@
             <h4 class="card-title"><%= `${user.email}'s profile` %></h4>
             <p class="card-text"><%= `Account Status: ${user.role}` %></p>
             <% if (user.role != "premium") { %>
-              <a href="/users/showUpgrade" class="btn btn-primary btn-lg">Upgrade to Premium</a>
+              <a href="/users/showUpgrade" class="btn btn-primary btn-sm m-1">Upgrade to Premium</a>
+              <a href="/wikis/new" class="btn btn-primary btn-sm">Create a public Wiki</a>
             <% } else { %>
-                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#downgradeModal">
-                  Downgrade Account to 'Member'
-                </button>
+              <a href="/wikis/new" class="btn btn-primary btn-sm">Create a Public Wiki</a>
+              <a href="/wikis/newPrivate" class="btn btn-primary btn-sm m-1">Create a Private Wiki</a>
+              <button type="button" class="btn btn-secondary btn-sm m-1" data-toggle="modal" data-target="#downgradeModal">
+                Downgrade Account to 'Member'
+              </button>
 
                 <!--Downgrade Modal -->
                 <div class="modal fade" id="downgradeModal" tabindex="-1" role="dialog" aria-labelledby="downgradeModalLabel" aria-hidden="true">
@@ -41,7 +44,7 @@
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                       <form action="/users/<%= user.id %>/downgrade" method="post">
-                        <button type="submit" class="btn btn-primary">Downgrade</button>
+                        <button type="submit" class="btn btn-primary btn-sm m-1">Downgrade</button>
                       </form>
                     </div>
                   </div>
@@ -66,6 +69,11 @@
                   <a href="/wikis/<%= wiki.id %>">
                     <%= wiki.title %>
                   </a>
+                  <% if (wiki.private) { %>
+                    <i class="fa fa-lock m-1 icon-blue" aria-hidden="true"></i>
+                  <% } else { %>
+                    <i class="fa fa-unlock-alt m-1 icon-red" aria-hidden="true"></i>
+                  <% } %>
                 </li>
               <% }) %>
             <% } %>

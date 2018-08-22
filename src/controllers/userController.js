@@ -1,4 +1,6 @@
 const userQueries = require("../db/queries.users.js");
+const wikiQueries = require("../db/queries.wikis.js");
+
 const passport = require("passport");
 const sgMail = require('@sendgrid/mail');
 const stripe = require("stripe")("sk_test_U68vkbnSn99gjqwhOQHA7TBx");
@@ -146,6 +148,15 @@ module.exports = {
           req.flash('error', message);
           res.redirect("/");
         } else {
+          wikiQueries.makePublic(req.params.id, (err, user) => {
+            if(err){
+              let message = {param: "", msg:err.errors[0].message};
+              req.flash('error', message);
+              res.redirect("/");
+            } else {
+              req.flash('error', "Your wikis have been downgaded to 'public'");
+            }
+          });
           sgMail.setApiKey(process.env.SENDGRID_API_KEY);
           const msg = {
             to: req.user.email,

@@ -57,7 +57,7 @@ module.exports = {
 
     });
   },
-  
+
   getUser(id, callback){
     let result = {};
     User.findById(id)
@@ -66,7 +66,7 @@ module.exports = {
         callback(404);
       } else {
         result["user"] = user;
-        Wiki.scope({method: ["lastFiveFor", id]}).all()
+        Wiki.scope({method: ["myWikis", id]}).all()
         .then((wikis) => {
           result["wikis"] = wikis;
           callback(null, result);

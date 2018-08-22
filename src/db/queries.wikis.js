@@ -22,6 +22,34 @@ module.exports = {
       callback(err);
     })
   },
+  makePublic(id, callback){
+    return Wiki.findAll({where:{private:true, userId:id}})
+    .then((wikis) => {
+      for (let wiki of wikis) {
+        wiki.update({private:false});
+      }
+      callback(null, wikis);
+    })
+    .catch((err) => {
+      console.log(err);
+      callback(err);
+    })
+  },
+  changePrivacy(id, callback){
+    return Wiki.findOne({where:{id:id}})
+    .then((wiki) => {
+      if (wiki.private) {
+        wiki.update({private:false})
+      } else {
+        wiki.update({private:true})
+      }
+      callback(null, wiki);
+    })
+    .catch((err) => {
+      console.log(err);
+      callback(err);
+    })
+  },
   addWiki(newWiki, callback){
     return Wiki.create(newWiki)
     .then((wiki) => {

@@ -7,3 +7,10 @@ navbar>li {
   position: relative;
   display: block;
 }
+
+.fa.icon-blue {
+    color: blue;
+}
+.fa.icon-red {
+    color: red;
+}

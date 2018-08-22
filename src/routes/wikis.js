@@ -18,10 +18,11 @@ router.post("/wikis/createPrivate",
   helper.ensureAuthenticated,
   validation.validateWikis,
   wikiController.createPrivate);
-  
+
 router.get("/wikis/:id", wikiController.show);
 router.post("/wikis/:id/destroy", wikiController.destroy);
 router.get("/wikis/:id/edit", wikiController.edit);
 router.post("/wikis/:id/update", validation.validateWikis, wikiController.update);
+router.post("/wikis/:id/changePrivacy", wikiController.changePrivacy);
 
 module.exports = router;
