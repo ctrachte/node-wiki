@@ -19,14 +19,40 @@
             <% if (user.role != "premium") { %>
               <a href="/users/showUpgrade" class="btn btn-primary btn-lg">Upgrade to Premium</a>
             <% } else { %>
-              <form action="/users/<%= user.id %>/downgrade" method="post">
-                <button type="submit" class="btn btn-primary">Downgrade to standard account</button>
-              </form>
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#downgradeModal">
+                  Downgrade Account to 'Member'
+                </button>
+
+                <!--Downgrade Modal -->
+                <div class="modal fade" id="downgradeModal" tabindex="-1" role="dialog" aria-labelledby="downgradeModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="downgradeModalLabel">Are you sure?</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Downgrading your account will change all your private wikis to public wikis. You may want to delete them first manually.</p>
+                    </hr>
+                      <p>If you wish to upgrade your account again in the future, payment will still be required.</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <form action="/users/<%= user.id %>/downgrade" method="post">
+                        <button type="submit" class="btn btn-primary">Downgrade</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                </div>
             <% } %>
           </div>
         </div>
 
       </section>
+
       <section class="col-lg-8">
 
         <div class="card m-1">
