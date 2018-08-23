@@ -19,6 +19,7 @@
           <%- wiki.body %>
           <% if(currentUser && (currentUser.isAdmin() || ((currentUser.id===wiki.userId && wiki.private===false) || (currentUser.role === "premium" && currentUser.id===wiki.userId && wiki.private===true)))) { %>
             <a href="/wikis/<%= wiki.id %>/edit" class="btn btn-warning">Edit</a>
+            <a href="/wikis/<%= wiki.id %>/collab" class="btn btn-warning">Add Collaborator</a>
             <form style="display:initial" action="/wikis/<%= wiki.id %>/destroy" method="post">
               <button type="submit" class="btn btn-danger">Delete</button>
             </form>
