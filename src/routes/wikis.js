@@ -6,6 +6,7 @@ const wikiController = require("../controllers/wikiController");
 const helper = require("../auth/helpers");
 
 router.post("/wikis/:id/addCollab", validation.validateCollabs, collaborationController.addCollab);
+router.post("/wikis/:wikiId/deleteCollab/:id", collaborationController.destroy);
 
 router.get("/wikis", wikiController.index);
 router.get("/publicWikis", wikiController.publicIndex);

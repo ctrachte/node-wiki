@@ -28,7 +28,7 @@ module.exports = {
 
       } else if (user.id = req.user.id) {
 
-        req.flash("notice", "You are already able to collaborate!");
+        req.flash("notice", "You cannot add yourself!");
         res.redirect(`/wikis/${req.params.id}/edit`);
 
       } else {
@@ -53,22 +53,13 @@ module.exports = {
       }
     });
   },
-  // destroy(req, res, next){
-  //   wikiQueries.deleteWiki(req, (err, deletedRecordsCount) => {
-  //     if(err){
-  //       res.redirect(500, `/wikis/${req.params.id}`)
-  //     } else {
-  //       res.redirect(303, "/")
-  //     }
-  //   });
-  // }
-  // update(req, res, next){
-  //   wikiQueries.updateWiki(req, req.body, (err, wiki) => {
-  //     if(err || wiki == null){
-  //       res.redirect(404, `/wikis/${req.params.id}/edit`);
-  //     } else {
-  //       res.redirect(`/wikis/${req.params.id}`);
-  //     }
-  //   });
-  // }
+  destroy(req, res, next){
+    collaborationQueries.deleteCollaboration(req, (err, deletedRecordsCount) => {
+      if(err){
+        res.redirect(500, `/wikis/${req.params.id}/edit`)
+      } else {
+        res.redirect(303, "/")
+      }
+    });
+  }
 }

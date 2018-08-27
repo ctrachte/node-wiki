@@ -30,29 +30,29 @@ module.exports = {
     .catch((err) => {
       callback(err);
     })
+  },
+  deleteCollaboration(req, callback){
+
+    return Collaboration.findById(req.params.id)
+    .then((collab) => {
+      const authorized = new Authorizer(req.user, collab).destroy();
+
+      if(authorized) {
+        collab.destroy()
+        .then((res) => {
+          callback(null, collab);
+        });
+
+      } else {
+
+        req.flash("notice", "You are not authorized to remove Collaborators.")
+        callback(401);
+      }
+    })
+    .catch((err) => {
+      callback(err);
+    });
   }
-  // deleteCollaboration(req, callback){
-  //
-  //   return Collaboration.findById(req.params.id)
-  //   .then((wiki) => {
-  //     const authorized = new Authorizer(req.user, collaboration).destroy();
-  //
-  //     if(authorized) {
-  //       wiki.destroy()
-  //       .then((res) => {
-  //         callback(null, collaboration);
-  //       });
-  //
-  //     } else {
-  //
-  //       req.flash("notice", "You are not authorized to delete this collaboration.")
-  //       callback(401);
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     callback(err);
-  //   });
-  // },
   // updateCollaboration(req, updatedCollaboration, callback){
   //
   //   return Collaboration.findById(req.params.id)
