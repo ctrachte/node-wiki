@@ -13,9 +13,19 @@ module.exports = {
     })
   },
   addCollaboration(newCollaboration, callback){
-    return Collaboration.create(newCollaboration)
+    Collaboration.findOne({where:{userId:newCollaboration.userId, wikiId:newCollaboration.wikiId}})
     .then((collaboration) => {
-      callback(null, collaboration);
+      if (!collaboration) {
+        return Collaboration.create(newCollaboration)
+        .then((collaboration) => {
+          callback(null, collaboration);
+        })
+        .catch((err) => {
+          callback(err);
+        })
+      } else {
+        callback("This user is already a collaborator!");
+      }
     })
     .catch((err) => {
       callback(err);

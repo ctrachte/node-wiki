@@ -5,7 +5,7 @@ const Authorizer = require("../policies/collaboration");
 
 module.exports = {
 
-  edit(req, res, next){
+  show(req, res, next){
     collaborationQueries.getAllCollaborations((err, collaborations) => {
       if(err){
         res.redirect(500, "static/index");
@@ -14,40 +14,44 @@ module.exports = {
       }
     });
   },
-  udpate(req, res, next){
-    let wikiId;
-    let userId;
-    wikiQueries.getWiki(req.params.id, (err, wiki) => {
-      if(err || wiki == null){
-        wikiId = null;
-      } else {
-        wikiId = wiki.id;
-      }
-    });
+  addCollab(req, res, next){
     userQueries.getUserByEmail(req.body.email, (err, user) => {
+
+      let wikiId = req.params.id;
+      let userId;
+      let email = req.body.email;
+
       if(err || user == null){
-        userId = null;
+
+        req.flash("notice", "That user could not be found!");
+        res.redirect(`/wikis/${req.params.id}/edit`);
+
+      } else if (user.id = req.user.id) {
+
+        req.flash("notice", "You are already able to collaborate!");
+        res.redirect(`/wikis/${req.params.id}/edit`);
+
       } else {
+
         userId = user.id;
+
+        let collaboration = {
+          wikiId:wikiId,
+          userId:userId,
+          email:email
+        };
+
+        collaborationQueries.addCollaboration(collaboration, (err, collaboration) => {
+          if(err || collaboration == null){
+            req.flash('notice', err);
+            res.redirect(`/wikis/${req.params.id}/edit`);
+          } else {
+            req.flash("notice", `${user.email} added as a collaborator.`);
+            res.redirect(`/wikis/${req.params.id}/edit`);
+          }
+        });
       }
     });
-    if (wikiId && userId) {
-      let collaboration = {
-        wikiId:wikiId,
-        userId:userId
-      };
-      collaborationQueries.addCollaboration(collaboration, (err, collaboration) => {
-        if(err || collaboration == null){
-          res.redirect(404, `/wikis/${req.params.id}/edit`);
-        } else {
-          res.redirect(`/wikis/${req.params.id}/collab`);
-        }
-      });
-    } else {
-      req.flash("notice", "That user could not be found!");
-      res.redirect(`/wikis/${req.params.id}/collab`);
-    }
-
   },
   // destroy(req, res, next){
   //   wikiQueries.deleteWiki(req, (err, deletedRecordsCount) => {

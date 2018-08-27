@@ -1,7 +1,8 @@
 const wikiQueries = require("../db/queries.wikis.js");
 const Authorizer = require("../policies/wiki");
 const markdown = require( "markdown" ).markdown;
-
+const collaborationQueries = require("../db/queries.collaborations.js");
+  
 module.exports = {
   index(req, res, next){
     const authorized = new Authorizer(req.user)._isPremium();
@@ -112,19 +113,21 @@ module.exports = {
 
     wikiQueries.getWiki(req.params.id, (err, wiki) => {
       if(err || wiki == null){
+        console.log(err);
         res.redirect(404, "/");
       } else {
+        collaborationQueries.getAllCollaborations((err, collabs) => {
+            const authorized = new Authorizer(req.user, wiki).edit();
 
-        const authorized = new Authorizer(req.user, wiki).edit();
-
-        if(authorized){
-          res.render("wikis/edit", {wiki});
-        } else {
-          req.flash("You are not authorized to edit this wiki.")
-          res.redirect(404, "/");
+            if(authorized){
+              res.render("wikis/edit", {wiki, collabs});
+            } else {
+              req.flash("You are not authorized to edit this wiki.")
+              res.redirect(404, "/");
+            }
+          });
         }
-      }
-    });
+      });
   },
   update(req, res, next){
     wikiQueries.updateWiki(req, req.body, (err, wiki) => {

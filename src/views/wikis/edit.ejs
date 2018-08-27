@@ -9,7 +9,7 @@
     <main class="container">
       <% include ../static/partials/messages.ejs %>
 
-      <h1>Edit Wiki</h1>
+      <h2>Edit Wiki</h2>
 
       <form action="/wikis/<%= wiki.id %>/update" method="post">
         <div class="form-group">
@@ -24,6 +24,29 @@
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
       </form>
+      <% if (collabs[0].email) { %>
+        <h4>Collaborators</h4>
+        <% collabs.forEach((collab) => { %>
+             <div class="card border-secondary mb-3" style="margin:1.5em;">
+               <div class="card-body">
+                   <h5 class="card-title"><%= collab.email %></h5>
+                 <a href="#" class="btn btn-info">Remove</a>
+               </div>
+             </div>
+        <% }) %>
+      <% } %>
+      <h4>Add a Collaborator!</h4>
+      <form action="/wikis/<%= wiki.id %>/addCollab" method="post">
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+          <small class="text-muted" id="emailHelp">email address must be a valid address</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+
     </main>
 
     <% include ../static/partials/baseScripts.ejs %>
