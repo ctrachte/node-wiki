@@ -2,7 +2,7 @@ const wikiQueries = require("../db/queries.wikis.js");
 const Authorizer = require("../policies/wiki");
 const markdown = require( "markdown" ).markdown;
 const collaborationQueries = require("../db/queries.collaborations.js");
-  
+
 module.exports = {
   index(req, res, next){
     const authorized = new Authorizer(req.user)._isPremium();

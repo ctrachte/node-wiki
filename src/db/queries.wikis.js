@@ -1,4 +1,5 @@
 const Wiki = require("./models").Wiki;
+const Collaboration = require("./models").Collaboration;
 const Authorizer = require("../policies/wiki");
 const User = require("./models").User;
 
@@ -22,6 +23,23 @@ module.exports = {
       callback(err);
     })
   },
+  // getCollabWikis(req, callback){
+  //   return Collaboration.findAll({
+  //     where: {userId:req.user.id},
+  //     include: [{
+  //         model: Wiki,
+  //         as: 'Wikis',
+  //         where: { id:req.params.id } }
+  //     }]
+  //   })
+  //   .then((collabWikis) => {
+  //     callback(null, collabWikis);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //     callback(err);
+  //   })
+  // },
   makePublic(id, callback){
     return Wiki.findAll({where:{private:true, userId:id}})
     .then((wikis) => {

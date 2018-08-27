@@ -23,7 +23,7 @@ router.post("/wikis/createPrivate",
   validation.validateWikis,
   wikiController.createPrivate);
 
-router.get("/wikis/:id", wikiController.show);
+router.get("/wikis/:id",wikiController.show);
 router.post("/wikis/:id/destroy", wikiController.destroy);
 router.get("/wikis/:id/edit", wikiController.edit, collaborationController.show);
 router.post("/wikis/:id/update", validation.validateWikis, wikiController.update);
