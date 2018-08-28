@@ -26,7 +26,7 @@ module.exports = {
         req.flash("notice", "That user could not be found!");
         res.redirect(`/wikis/${req.params.id}/edit`);
 
-      } else if (user.id = req.user.id) {
+      } else if (user.id === req.user.id) {
 
         req.flash("notice", "You cannot add yourself!");
         res.redirect(`/wikis/${req.params.id}/edit`);
@@ -56,9 +56,9 @@ module.exports = {
   destroy(req, res, next){
     collaborationQueries.deleteCollaboration(req, (err, deletedRecordsCount) => {
       if(err){
-        res.redirect(500, `/wikis/${req.params.id}/edit`)
+        res.redirect(500, `/wikis/${req.params.id}/edit`);
       } else {
-        res.redirect(303, "/")
+        res.redirect(303, "/");
       }
     });
   }

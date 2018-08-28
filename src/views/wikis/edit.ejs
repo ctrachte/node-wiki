@@ -9,7 +9,7 @@
     <main class="container">
       <% include ../static/partials/messages.ejs %>
 
-      <h2>Edit Wiki</h2>
+      <h2 class="m-1">Edit Wiki</h2>
 
       <form action="/wikis/<%= wiki.id %>/update" method="post">
         <div class="form-group">
@@ -24,8 +24,9 @@
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
       </form>
+    </hr>
       <% if (collabs[0]) { %>
-        <h4>Collaborators</h4>
+        <h4 class="m-1">Collaborators</h4>
         <% collabs.forEach((collab) => { %>
              <div class="card border-secondary mb-3" style="margin:1.5em;">
                <div class="card-body">
@@ -37,7 +38,8 @@
              </div>
         <% }) %>
       <% } %>
-      <h4>Add a Collaborator!</h4>
+    </hr>
+      <h4 class="m-1">Add a Collaborator!</h4>
       <form action="/wikis/<%= wiki.id %>/addCollab" method="post">
 
         <div class="form-group">

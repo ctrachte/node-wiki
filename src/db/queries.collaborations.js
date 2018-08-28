@@ -1,6 +1,7 @@
 const Collaboration = require("./models").Collaboration;
 const Authorizer = require("../policies/wiki");
 const User = require("./models").User;
+const Wiki = require("./models").Wiki;
 
 module.exports = {
   getAllCollaborations(callback){
@@ -35,50 +36,28 @@ module.exports = {
 
     return Collaboration.findById(req.params.id)
     .then((collab) => {
-      const authorized = new Authorizer(req.user, collab).destroy();
+      Wiki.findById(req.params.wikiId)
+      .then((wiki) => {
 
-      if(authorized) {
-        collab.destroy()
-        .then((res) => {
-          callback(null, collab);
-        });
+        const authorized = new Authorizer(req.user, wiki).destroy();
 
-      } else {
+        if(authorized) {
+          collab.destroy()
+          .then((res) => {
+            callback(null, collab);
+          });
+        } else {
+          req.flash("notice", "You are not authorized to remove Collaborators.")
+          callback(401);
+        }
 
-        req.flash("notice", "You are not authorized to remove Collaborators.")
-        callback(401);
-      }
+      }).catch((err) => {
+        callback(err);
+      });
+
     })
     .catch((err) => {
       callback(err);
     });
   }
-  // updateCollaboration(req, updatedCollaboration, callback){
-  //
-  //   return Collaboration.findById(req.params.id)
-  //   .then((wiki) => {
-  //     if(!wiki){
-  //       return callback("Collaboration not found");
-  //     }
-  //
-  //     const authorized = new Authorizer(req.user, wiki).update();
-  //
-  //     if(authorized) {
-  //
-  //       wiki.update(updatedCollaboration, {
-  //         fields: Object.keys(updatedCollaboration)
-  //       })
-  //       .then(() => {
-  //         callback(null, collaboration);
-  //       })
-  //       .catch((err) => {
-  //         callback(err);
-  //       });
-  //     } else {
-  //
-  //       req.flash("notice", "You are not authorized to update this collaboration.");
-  //       callback("Forbidden");
-  //     }
-  //   });
-  // }
 }
