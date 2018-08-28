@@ -1,7 +1,7 @@
 const collaborationQueries = require("../db/queries.collaborations.js");
 const wikiQueries = require("../db/queries.wikis.js");
 const userQueries = require("../db/queries.users.js");
-const Authorizer = require("../policies/collaboration");
+const Authorizer = require("../policies/wiki");
 
 module.exports = {
 
@@ -15,6 +15,7 @@ module.exports = {
     });
   },
   addCollab(req, res, next){
+
     userQueries.getUserByEmail(req.body.email, (err, user) => {
 
       let wikiId = req.params.id;

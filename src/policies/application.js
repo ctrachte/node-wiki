@@ -1,8 +1,22 @@
 module.exports = class ApplicationPolicy {
 
-  constructor(user, record) {
+  constructor(user, record, collabs) {
     this.user = user;
     this.record = record;
+    this.collabs = collabs;
+  }
+
+  _isCollab() {
+    if (this.collabs) {
+      for (let collab of this.collabs) {
+        if (collab.userId == this.user.id && collab.wikiId == this.record.id) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return false;
+    }
   }
 
   _isOwner() {

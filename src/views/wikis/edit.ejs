@@ -26,9 +26,9 @@
       </form>
     <hr />
     <% if (wiki.private) { %>
-      <% if (collabs[0]) { %>
+      <% if (wiki.collaborators) { %>
         <h4 class="m-1">Collaborators</h4>
-        <% collabs.forEach((collab) => { %>
+        <% wiki.collaborators.forEach((collab) => { %>
              <div class="card border-secondary mb-3" style="margin:1.5em;">
                <div class="card-body">
                  <h5 class="card-title"><%= collab.email %></h5>

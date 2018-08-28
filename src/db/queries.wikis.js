@@ -64,9 +64,23 @@ module.exports = {
       callback(err);
     })
   },
-  getWiki(id, callback){
+  getWiki(id, userId, callback){
     return Wiki.findById(id, {
-      include: {model: User}
+      include: [{model:Collaboration, as: 'collaborators', attributes:['id','userId', 'wikiId', 'email']}],
+      where:{"$collaborators.wikiId$":id}
+    })
+    .then((wiki) => {
+      callback(null, wiki);
+    })
+    .catch((err) => {
+      console.log(err);
+      callback(err);
+    })
+  },
+  getEditWiki(id, userId, callback){
+    return Wiki.findById(id, {
+      include: [{model:Collaboration, as: 'collaborators', attributes:['id','userId', 'wikiId', 'email']}],
+      where:{"$collaborators.wikiId$":id}
     })
     .then((wiki) => {
       callback(null, wiki);
@@ -79,7 +93,7 @@ module.exports = {
 
     return Wiki.findById(req.params.id)
     .then((wiki) => {
-      const authorized = new Authorizer(req.user, wiki).destroy();
+      const authorized = new Authorizer(req.user, wiki, null).destroy();
 
       if(authorized) {
         wiki.destroy()
