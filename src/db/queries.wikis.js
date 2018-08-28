@@ -2,6 +2,7 @@ const Wiki = require("./models").Wiki;
 const Collaboration = require("./models").Collaboration;
 const Authorizer = require("../policies/wiki");
 const User = require("./models").User;
+const Op = require("sequelize").Op;
 
 module.exports = {
   getAllWikis(callback){
@@ -13,8 +14,11 @@ module.exports = {
       callback(err);
     })
   },
-  getPublicWikis(callback){
-    return Wiki.findAll({where:{private:false}})
+  getPublicWikis(id, callback){
+    return Wiki.findAll({
+      include: [{model:Collaboration, as: 'collaborators', attributes:['userId']}],
+      where:{[Op.or]:[{private:false}, {"$collaborators.userId$": id}]}
+    })
     .then((wikis) => {
       callback(null, wikis);
     })

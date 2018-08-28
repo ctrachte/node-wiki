@@ -9,7 +9,8 @@ router.post("/wikis/:id/addCollab", validation.validateCollabs, collaborationCon
 router.post("/wikis/:wikiId/deleteCollab/:id", collaborationController.destroy);
 
 router.get("/wikis", wikiController.index);
-router.get("/publicWikis", wikiController.publicIndex);
+router.get("/publicWikis",  helper.ensureAuthenticated,
+ wikiController.publicIndex);
 
 router.get("/wikis/new", wikiController.new);
 router.get("/wikis/newPrivate", wikiController.newPrivate);

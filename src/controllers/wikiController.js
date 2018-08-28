@@ -21,7 +21,7 @@ module.exports = {
     }
   },
   publicIndex(req, res, next){
-    wikiQueries.getPublicWikis((err, wikis) => {
+    wikiQueries.getPublicWikis(req.user.id, (err, wikis) => {
       if(err){
         res.redirect(500, "static/index");
       } else {
