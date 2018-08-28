@@ -16,14 +16,6 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Collaboration.associate = function(models) {
     // associations can be defined here
-    Collaboration.hasMany(models.Wiki, {
-      foreignKey: "id",
-      as: "wikis"
-    });
-    Collaboration.hasMany(models.User, {
-      foreignKey: "id",
-      as: "users"
-    });
   };
   return Collaboration;
 };
