@@ -24,7 +24,8 @@
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
       </form>
-    </hr>
+    <hr />
+    <% if (wiki.private) { %>
       <% if (collabs[0]) { %>
         <h4 class="m-1">Collaborators</h4>
         <% collabs.forEach((collab) => { %>
@@ -37,19 +38,21 @@
                </div>
              </div>
         <% }) %>
+        <hr />
       <% } %>
-    </hr>
       <h4 class="m-1">Add a Collaborator!</h4>
       <form action="/wikis/<%= wiki.id %>/addCollab" method="post">
 
         <div class="form-group">
-          <label for="email">Email</label>
+          <label for="email"></label>
           <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-          <small class="text-muted" id="emailHelp">email address must be a valid address</small>
+          <small class="text-muted" id="emailHelp">Email address must be valid, and a registered user.</small>
         </div>
 
         <button type="submit" class="btn btn-primary">Add</button>
       </form>
+    <% } %>
+
 
     </main>
 

@@ -56,9 +56,10 @@ module.exports = {
   destroy(req, res, next){
     collaborationQueries.deleteCollaboration(req, (err, deletedRecordsCount) => {
       if(err){
-        res.redirect(500, `/wikis/${req.params.id}/edit`);
+        res.redirect(`/wikis/${req.params.wikiId}/edit`);
       } else {
-        res.redirect(303, "/");
+        req.flash("notice", "Collaborator removed.");
+        res.redirect(`/wikis/${req.params.wikiId}/edit`);
       }
     });
   }

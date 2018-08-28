@@ -113,17 +113,16 @@ module.exports = {
 
     wikiQueries.getWiki(req.params.id, (err, wiki) => {
       if(err || wiki == null){
-        console.log(err);
         res.redirect(404, "/");
       } else {
-        collaborationQueries.getAllCollaborations((err, collabs) => {
+        collaborationQueries.getAllCollaborations(req.params.id, (err, collabs) => {
             const authorized = new Authorizer(req.user, wiki).edit();
 
             if(authorized){
               res.render("wikis/edit", {wiki, collabs});
             } else {
-              req.flash("You are not authorized to edit this wiki.")
-              res.redirect(404, "/");
+              req.flash("notice", "You are not authorized to edit this wiki.")
+              res.redirect(`/wikis/${req.params.id}`);
             }
           });
         }
@@ -153,8 +152,8 @@ module.exports = {
         }
       });
     } else {
-      req.flash("error", "You are not authorized to update this user.");
-      res.redirect("/");
+      req.flash("notice", "You are not authorized to update this user.");
+      res.redirect(`/wikis/${req.params.id}`);
     }
   },
 }

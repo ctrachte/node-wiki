@@ -4,8 +4,10 @@ const User = require("./models").User;
 const Wiki = require("./models").Wiki;
 
 module.exports = {
-  getAllCollaborations(callback){
-    return Collaboration.all()
+  getAllCollaborations(id, callback){
+    return Collaboration.findAll({
+      where:{wikiId: id}
+    })
     .then((collaborations) => {
       callback(null, collaborations);
     })
