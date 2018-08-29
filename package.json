@@ -27,6 +27,8 @@
     "express-validator": "^5.0.2",
     "legit": "^1.0.4",
     "markdown": "^0.5.0",
+    "markdown-it": "^8.4.2",
+    "markdown-it-emoji": "^1.4.0",
     "morgan": "^1.9.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",

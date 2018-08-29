@@ -1,6 +1,13 @@
 const wikiQueries = require("../db/queries.wikis.js");
 const Authorizer = require("../policies/wiki");
-const markdown = require( "markdown" ).markdown;
+const Emoji = require('markdown-it-emoji');
+const Markdown = require('markdown-it')({
+  linkify: true,
+  typographer: true})
+  .use(Emoji);
+Markdown.renderer.rules.table_open = function(tokens, idx) {
+      return '<table class="table">';
+};
 const collaborationQueries = require("../db/queries.collaborations.js");
 
 module.exports = {
@@ -106,7 +113,7 @@ module.exports = {
           req.flash("notice", "Wiki not found!");
           res.redirect("/");
         } else {
-          wiki.body = markdown.toHTML(wiki.body);
+          wiki.body = Markdown.render(wiki.body);
           res.render("wikis/show", {wiki});
         }
       } else {
