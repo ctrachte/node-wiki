@@ -113,13 +113,15 @@ module.exports = {
   },
   updateWiki(req, updatedWiki, callback){
 
-    return Wiki.findById(req.params.id)
+    return Wiki.findById(req.params.id, {
+      include: [{model:Collaboration, as: 'collaborators', attributes:['id','userId', 'wikiId', 'email']}]
+    })
     .then((wiki) => {
       if(!wiki){
         return callback("Wiki not found");
       }
 
-      const authorized = new Authorizer(req.user, wiki).update();
+      const authorized = new Authorizer(req.user, wiki, wiki.collaborators).update();
 
       if(authorized) {
 

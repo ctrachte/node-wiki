@@ -41,13 +41,20 @@ module.exports = {
           userId:userId,
           email:email
         };
-
-        collaborationQueries.addCollaboration(collaboration, (err, collaboration) => {
-          if(err || collaboration == null){
-            req.flash('notice', err);
-            res.redirect(`/wikis/${req.params.id}/edit`);
+        wikiQueries.getWiki(req.params.id, req.user.id, (err, wiki) => {
+          const authorized = new Authorizer(req.user, wiki).destroy();
+          if (authorized) {
+            collaborationQueries.addCollaboration(collaboration, (err, collaboration) => {
+              if(err || collaboration == null){
+                req.flash('notice', err);
+                res.redirect(`/wikis/${req.params.id}/edit`);
+              } else {
+                req.flash("notice", `${user.email} added as a collaborator.`);
+                res.redirect(`/wikis/${req.params.id}/edit`);
+              }
+            });
           } else {
-            req.flash("notice", `${user.email} added as a collaborator.`);
+            req.flash("notice", "You must be the creator of this wiki to add collaborators.")
             res.redirect(`/wikis/${req.params.id}/edit`);
           }
         });
