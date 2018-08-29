@@ -17,7 +17,7 @@ module.exports = {
       })
     } else {
       req.flash("notice", "You are not authorized to view private wikis");
-      res.redirect("/wikis/publicIndex");
+      res.redirect("/");
     }
   },
 

@@ -49,17 +49,18 @@ describe("routes : wikis", () => {
 
   });
 
-  // describe("GET /wikis", () => {
-  //
-  //  it("should redirect to home, not render anything", (done) => {
-  //    request.get(`${base}/wikis`, (err, res, body) => {
-  //      expect(err).toBeNull();
-  //      expect(res.statusCode).toBe(404);
-  //      done();
-  //    });
-  //  });
-  //
-  // });
+  describe("GET /wikis", () => {
+
+   it("should redirect to home, not render anything", (done) => {
+     request.get(`${base}/wikis`, (err, res, body) => {
+       expect(err).toBeNull();
+       expect(res.statusCode).toBe(200);
+       expect(body).not.toBe(null);
+       done();
+     });
+   });
+
+  });
 
   describe("admin user performing CRUD actions for Wikis", () => {
 
@@ -437,56 +438,57 @@ describe("routes : wikis", () => {
        });
 
      });
-     // describe("GET /wikis/:id/edit", () => {
-     //
-     //   it("should not render a view with an edit wiki form on another users wiki", (done) => {
-     //     request.get(`${base}/wikis/${this.wiki.id}/edit`, (err, res, body) => {
-     //       expect(err).toBeNull();
-     //       expect(res.statusCode).toBe(404);
-     //       done();
-     //     });
-     //   });
-     //
-     // });
-     // describe("POST /wikis/:id/update", () => {
-     //
-     //    it("should return a status code 404", (done) => {
-     //      request.post({
-     //        url: `${base}/wikis/${this.wiki.id}/update`,
-     //        form: {
-     //          title: "Snowman Building",
-     //          body: "Not sure why there's even a wiki for this."
-     //        }
-     //      }, (err, res, body) => {
-     //        expect(res.statusCode).toBe(404);
-     //        done();
-     //      });
-     //    });
-     //
-     //    it("should not update another users wiki with the given values", (done) => {
-     //        const options = {
-     //          url: `${base}/wikis/${this.wiki.id}/update`,
-     //          form: {
-     //            title: "Snowman Building",
-     //            body: "Not sure why there's even a wiki for this."
-     //          }
-     //        };
-     //        request.post(options,
-     //          (err, res, body) => {
-     //
-     //          expect(res.statusCode).toBe(404);
-     //
-     //          Wiki.findOne({
-     //            where: {id: this.wiki.id}
-     //          })
-     //          .then((wiki) => {
-     //            expect(wiki.title).toBe("Cool New Wiki");
-     //            done();
-     //          });
-     //        });
-     //    });
-     //
-     //  });
+     describe("GET /wikis/:id/edit", () => {
+
+       it("should render a view with an edit wiki form on another users public wiki", (done) => {
+         request.get(`${base}/wikis/${this.wiki.id}/edit`, (err, res, body) => {
+           expect(err).toBeNull();
+           expect(body).toContain("Cool New Wiki");
+           expect(res.statusCode).toBe(200);
+           done();
+         });
+       });
+
+     });
+     describe("POST /wikis/:id/update", () => {
+
+        it("should update the public wiki and return 302", (done) => {
+          request.post({
+            url: `${base}/wikis/${this.wiki.id}/update`,
+            form: {
+              title: "Snowman Building",
+              body: "Not sure why there's even a wiki for this."
+            }
+          }, (err, res, body) => {
+            expect(res.statusCode).toBe(302);
+            done();
+          });
+        });
+
+        it("should  update another users public wiki with the given values", (done) => {
+            const options = {
+              url: `${base}/wikis/${this.wiki.id}/update`,
+              form: {
+                title: "Snowman Building",
+                body: "Not sure why there's even a wiki for this."
+              }
+            };
+            request.post(options,
+              (err, res, body) => {
+
+              expect(res.statusCode).toBe(302);
+
+              Wiki.findOne({
+                where: {id: this.wiki.id}
+              })
+              .then((wiki) => {
+                expect(wiki.title).toBe("Snowman Building");
+                done();
+              });
+            });
+        });
+
+      });
     });
   describe("member user performing CRUD actions for their own Wikis", () => {
 
