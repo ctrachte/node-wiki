@@ -66,8 +66,7 @@ module.exports = {
   },
   getWiki(id, userId, callback){
     return Wiki.findById(id, {
-      include: [{model:Collaboration, as: 'collaborators', attributes:['id','userId', 'wikiId', 'email']}],
-      where:{"$collaborators.wikiId$":id}
+      include: [{model:Collaboration, as: 'collaborators', attributes:['id','userId', 'wikiId', 'email']}]
     })
     .then((wiki) => {
       callback(null, wiki);

@@ -20,7 +20,7 @@ module.exports = {
       res.redirect("/wikis/publicIndex");
     }
   },
-  
+
   publicIndex(req, res, next){
     wikiQueries.getPublicWikis(req.user.id, (err, wikis) => {
       if(err){
@@ -116,21 +116,21 @@ module.exports = {
     });
   },
   destroy(req, res, next){
-
-    const authorized = new Authorizer(req.user, wiki).destroy();
-    if(authorized){
-      wikiQueries.deleteWiki(req, (err, deletedRecordsCount) => {
-        if(err){
-          res.redirect(500, `/wikis/${req.params.id}`)
-        } else {
-          res.redirect(303, "/")
-        }
-      });
-    } else {
-      req.flash("notice", "You are not authorized to delete this wiki.")
-      res.redirect(`/`);
-    }
-
+    wikiQueries.getWiki(req.params.id, req.user.id, (err, wiki) => {
+      const authorized = new Authorizer(req.user, wiki).destroy();
+      if(authorized){
+        wikiQueries.deleteWiki(req, (err, deletedRecordsCount) => {
+          if(err){
+            res.redirect(500, `/wikis/${req.params.id}`)
+          } else {
+            res.redirect(303, "/")
+          }
+        });
+      } else {
+        req.flash("notice", "You are not authorized to delete this wiki.")
+        res.redirect(`/`);
+      }
+    });
   },
   edit(req, res, next){
 
