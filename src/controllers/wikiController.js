@@ -47,7 +47,7 @@ module.exports = {
       res.render("wikis/newPrivate");
     } else {
       req.flash("notice", "You are not authorized to create new private wikis");
-      res.redirect("/wikis/publicIndex");
+      res.redirect("/");
     }
   },
 

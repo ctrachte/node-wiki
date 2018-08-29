@@ -310,17 +310,17 @@ describe("routes : wikis", () => {
        });
 
      });
-     // describe("GET /wikis/newPrivate", () => {
-     //
-     //   it("should should not render a new private wiki form", (done) => {
-     //     request.get(`${base}/wikis/newPrivate`, (err, res, body) => {
-     //       expect(err).toBeNull();
-     //       expect(body).not.toContain("New Private Wiki");
-     //       done();
-     //     });
-     //   });
-     //
-     // });
+     describe("GET /wikis/newPrivate", () => {
+
+       it("should should not render a new private wiki form", (done) => {
+         request.get(`${base}/wikis/newPrivate`, (err, res, body) => {
+           expect(err).toBeNull();
+           expect(body).not.toContain("New Private Wiki");
+           done();
+         });
+       });
+
+     });
      describe("POST /wikis/createPrivate", () => {
 
         it("should not create a new private wiki", (done) => {
