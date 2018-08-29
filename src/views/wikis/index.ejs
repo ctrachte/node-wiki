@@ -38,7 +38,9 @@
         <% }) %>
 
       <footer class='footer'>
-        <% if(currentUser.role === "member") { %>
+        <% if(!currentUser) { %>
+          <p> Sign in to view wikis!</p>
+        <% } else if (currentUser.role === "member") { %>
           <div class='container m-1'>
             <span class="text-muted text-center">You are currently viewing all public wikis, and Private wikis you have collaborator access to.</span>
           </div>
