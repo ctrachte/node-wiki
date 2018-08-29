@@ -5,6 +5,8 @@ const base = "http://localhost:3000";
 const sequelize = require("../../src/db/models/index").sequelize;
 const Wiki = require("../../src/db/models").Wiki;
 const User = require("../../src/db/models").User;
+const Collaboration = require("../../src/db/models").Collaboration;
+
 
 describe("routes : wikis", () => {
 
@@ -25,7 +27,7 @@ describe("routes : wikis", () => {
           userId: this.user.id
         })
         .then((res) => {
-          this.wiki = res;  // store resulting topic in context
+          this.wiki = res;  // store resulting wiki in context
           done();
         })
         .catch((err) => {
@@ -275,7 +277,7 @@ describe("routes : wikis", () => {
      });
    });
    // end admin user specs, begin member user specs
-  describe("member user performing CRUD actions for another users Wikis", () => {
+  describe("member user performing CRUD actions on another users Wikis", () => {
 
     // before each test in member user context, send an authentication request
     // to a route we will create to mock an authentication request
@@ -490,7 +492,7 @@ describe("routes : wikis", () => {
 
       });
     });
-  describe("member user performing CRUD actions for their own Wikis", () => {
+  describe("member user performing CRUD actions on their own Wikis", () => {
 
       // before each test in member user context, send an authentication request
       // to a route we will create to mock an authentication request
@@ -508,26 +510,26 @@ describe("routes : wikis", () => {
             }
           );
         });
-      // describe("POST /wikis/:id/destroy", () => {
-      //
-      //   it("should delete the wiki with the associated ID", (done) => {
-      //
-      //     expect(this.wiki.id).toBe(1);
-      //
-      //     request.post(`${base}/wikis/${this.wiki.id}/destroy`, (err, res, body) => {
-      //
-      //       Wiki.findById(1)
-      //       .then((wiki) => {
-      //         expect(err).toBeNull();
-      //         expect(wiki).toBeNull();
-      //         console.log(wiki);
-      //         done();
-      //       })
-      //     });
-      //
-      //   });
-      //
-      // });
+      describe("POST /wikis/:id/destroy", () => {
+
+        it("should delete the wiki with the associated ID", (done) => {
+
+          expect(this.wiki.id).toBe(1);
+
+          request.post(`${base}/wikis/${this.wiki.id}/destroy`, (err, res, body) => {
+
+            Wiki.findById(1)
+            .then((wiki) => {
+              expect(err).toBeNull();
+              expect(wiki).toBeNull();
+              console.log(wiki);
+              done();
+            })
+          });
+
+        });
+
+      });
       describe("GET /wikis/:id/edit", () => {
 
         it("should render a view with an edit wiki form", (done) => {
@@ -580,4 +582,150 @@ describe("routes : wikis", () => {
 
        });
      });
+  describe("member user performing CRUD actions on Wikis with Collaboration access", () => {
+
+     // before each test in member user context, send an authentication request
+     // to a route we will create to mock an authentication request
+     // before each test in admin user context, send an authentication request
+     // to a route we will create to mock an authentication request
+     beforeEach((done) => {
+
+       User.create({
+         id:2,
+         email: "wikicollab@example.com",
+         password: "asdfasdf",
+         role: "member"
+       })
+       .then((user) => {
+         this.user = user;
+         Wiki.create({
+           id:2,
+           title: "Collab Wiki",
+           body: "This wiki has one collaborator",
+           private:true,
+           userId: 1
+         })
+         .then((res) => {
+           this.wiki = res;
+           Collaboration.create({
+             userId: 2,
+             wikiId: 2,
+             email:"wikicollab@example.com"
+           })
+           .then((res) => {
+             this.collaboration = res;  // store resulting collab in context
+             request.get({         // mock authentication
+               url: "http://localhost:3000/auth/fake",
+               form: {
+                 role: "member",     // mock authenticate as user
+                 userId:2,
+                 email: "wikicollab@example.com"
+               }
+             },
+               (err, res, body) => {
+                 done();
+               }
+             );
+           })
+         })
+       });
+      });
+     describe("POST /wikis/:id/destroy", () => {
+
+       it("should not delete the wiki with the associated ID", (done) => {
+
+         expect(this.wiki.id).toBe(2);
+
+         request.post(`${base}/wikis/${this.wiki.id}/destroy`, (err, res, body) => {
+
+           Wiki.findById(2)
+           .then((wiki) => {
+             expect(wiki.title).toContain('Collab Wiki');
+             done();
+           })
+         });
+
+       });
+
+     });
+     describe("POST /wikis/:wikiId/deleteCollab/:id", () => {
+
+       it("should not delete the collab with the associated ID", (done) => {
+
+         expect(this.collaboration.id).toBe(1);
+
+         request.post(`${base}/wikis/${this.wiki.id}/deleteCollab/${this.collaboration.id}`, (err, res, body) => {
+
+           Collaboration.findById(1)
+           .then((collab) => {
+             expect(collab).not.toBeNull();
+             done();
+           })
+         });
+
+       });
+
+     });
+     describe("POST /wikis/:wikiId/addCollab", () => {
+
+       it("should not add a collaborator with the associated ID", (done) => {
+
+         request.post({
+           url: `${base}/wikis/${this.wiki.id}/addCollab`,
+           form: {
+             userId: 1,
+             wikiId: this.wiki.id,
+             email:"starman@tesla.com"
+           }
+         }, (err, res, body) => {
+           Collaboration.findById(1)
+           .then((collab) => {
+             expect(collab).not.toBeNull();
+             done();
+           })
+         });
+
+       });
+
+     });
+     describe("POST /wikis/:id/update", () => {
+
+        it("should return a status code 302", (done) => {
+          request.post({
+            url: `${base}/wikis/${this.wiki.id}/update`,
+            form: {
+              title: "Snowman Wrecking Competition",
+              body: "I love watching them melt slowly."
+            }
+          }, (err, res, body) => {
+            expect(res.statusCode).toBe(302);
+            done();
+          });
+        });
+
+        it("should update the wiki with the given values", (done) => {
+            const options = {
+              url: `${base}/wikis/${this.wiki.id}/update`,
+              form: {
+                title: "Snowman Wrecking Competition",
+                body: "I love watching them melt quickly."
+              }
+            };
+            request.post(options,
+              (err, res, body) => {
+
+              expect(err).toBeNull();
+
+              Wiki.findOne({
+                where: {id: this.wiki.id}
+              })
+              .then((wiki) => {
+                expect(wiki.title).toBe("Snowman Wrecking Competition");
+                done();
+              });
+            });
+        });
+
+      });
+    });
 });
