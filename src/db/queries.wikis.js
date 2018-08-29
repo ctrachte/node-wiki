@@ -1,6 +1,8 @@
 const Wiki = require("./models").Wiki;
+const Collaboration = require("./models").Collaboration;
 const Authorizer = require("../policies/wiki");
 const User = require("./models").User;
+const Op = require("sequelize").Op;
 
 module.exports = {
   getAllWikis(callback){
@@ -12,8 +14,11 @@ module.exports = {
       callback(err);
     })
   },
-  getPublicWikis(callback){
-    return Wiki.findAll({where:{private:false}})
+  getPublicWikis(id, callback){
+    return Wiki.findAll({
+      include: [{model:Collaboration, as: 'collaborators', attributes:['userId']}],
+      where:{[Op.or]:[{private:false}, {"$collaborators.userId$": id}]}
+    })
     .then((wikis) => {
       callback(null, wikis);
     })
@@ -59,9 +64,23 @@ module.exports = {
       callback(err);
     })
   },
-  getWiki(id, callback){
+  getWiki(id, userId, callback){
     return Wiki.findById(id, {
-      include: {model: User }
+      include: [{model:Collaboration, as: 'collaborators', attributes:['id','userId', 'wikiId', 'email']}],
+      where:{"$collaborators.wikiId$":id}
+    })
+    .then((wiki) => {
+      callback(null, wiki);
+    })
+    .catch((err) => {
+      console.log(err);
+      callback(err);
+    })
+  },
+  getEditWiki(id, userId, callback){
+    return Wiki.findById(id, {
+      include: [{model:Collaboration, as: 'collaborators', attributes:['id','userId', 'wikiId', 'email']}],
+      where:{"$collaborators.wikiId$":id}
     })
     .then((wiki) => {
       callback(null, wiki);
@@ -74,7 +93,7 @@ module.exports = {
 
     return Wiki.findById(req.params.id)
     .then((wiki) => {
-      const authorized = new Authorizer(req.user, wiki).destroy();
+      const authorized = new Authorizer(req.user, wiki, null).destroy();
 
       if(authorized) {
         wiki.destroy()
@@ -94,13 +113,15 @@ module.exports = {
   },
   updateWiki(req, updatedWiki, callback){
 
-    return Wiki.findById(req.params.id)
+    return Wiki.findById(req.params.id, {
+      include: [{model:Collaboration, as: 'collaborators', attributes:['id','userId', 'wikiId', 'email']}]
+    })
     .then((wiki) => {
       if(!wiki){
         return callback("Wiki not found");
       }
 
-      const authorized = new Authorizer(req.user, wiki).update();
+      const authorized = new Authorizer(req.user, wiki, wiki.collaborators).update();
 
       if(authorized) {
 

@@ -15,7 +15,7 @@
         <div class="card m-1">
           <div class="card-body">
             <h4 class="card-title"><%= `${user.email}'s profile` %></h4>
-            <p class="card-text"><%= `Account Status: ${user.role}` %></p>
+            <p class="card-text"><%= `Account Status: ${user.role.toUpperCase()}` %></p>
             <% if (user.role != "premium") { %>
               <a href="/users/showUpgrade" class="btn btn-primary btn-sm m-1">Upgrade to Premium</a>
               <a href="/wikis/new" class="btn btn-primary btn-sm">Create a public Wiki</a>

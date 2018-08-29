@@ -19,6 +19,27 @@ module.exports = {
       return next();
     }
   },
+  validateCollabs(req, res, next) {
+
+    if(req.method === "POST") {
+
+     legit(req.body.email)
+       .then(result => {
+         if (result.isValid===false) {req.flash("error", "Please choose a valid email.");}
+       })
+       .catch(err => console.log(err));
+    }
+
+    const errors = req.validationErrors();
+
+    if (errors) {
+
+      req.flash("error", errors);
+      return res.redirect(303, req.headers.referer)
+    } else {
+      return next();
+    }
+  },
   validateUsers(req, res, next) {
     if(req.method === "POST") {
 
